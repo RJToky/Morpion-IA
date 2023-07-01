@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script
+      src="{{ url_for('static', filename='js/game_canvas.js') }}"
+      defer
+    ></script>
+    <script
+      src="{{ url_for('static', filename='js/script.js') }}"
+      defer
+    ></script>
+    <title>Morpion</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <span><b>X : </b><span class="cross"></span></span>
+        <span><b>O : </b><span class="circle"></span></span>
+      </div>
+      <div><b>Difficulty : </b><span class="difficulty"></span></div>
+      <div><b>Round : </b><span class="round"></span></div>
+    </header>
+    <main>
+      <canvas id="gameCanvas"></canvas>
+    </main>
+    <div class="setting">
+      <img
+        src="{{ url_for('static', filename='svg/setting-svgrepo-com.svg') }}"
+        alt=""
+      />
+    </div>
+    <div class="modal">
+      <div class="bg"></div>
+      <div class="container">
+        <form action="/play" method="get">
+          <div class="field">
+            <label for="player">Choose your player</label>
+            <select name="player" id="">
+              <option value="X">X</option>
+              <option value="O">O</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="difficulty">Choose the difficulty</label>
+            <select name="difficulty" id="">
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <button>Restart</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
