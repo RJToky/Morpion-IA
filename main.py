@@ -235,8 +235,8 @@ def IA(board, player, IA):
 
 if __name__=="__main__":
   board = [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", "X"]
+    ["X", "X", ""],
+    ["", "O", ""],
+    ["", "", ""]
   ]
-  print(easy(board, "X", "O"))
+  print(hard(board, "X", "O"))
