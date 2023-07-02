@@ -112,9 +112,9 @@ def evaluate_position(board, player, IA):
     return -1
   return 0
 
-def minimax(board, depth, max_depth, maximizing_player, player, IA):
+def minimax(board, depth, max_depth, maximizing_player, player, IA, n = 0):
   if depth == max_depth or verify_winner(board, IA) or verify_winner(board, player) or is_board_full(board):
-    return evaluate_position(board, player, IA), depth
+    return evaluate_position(board, player, IA), n
 
   if maximizing_player:
     max_score = float('-inf')
@@ -122,20 +122,20 @@ def minimax(board, depth, max_depth, maximizing_player, player, IA):
       for j in range(len(board[i])):
         if board[i][j] == "":
           board[i][j] = IA
-          score, depth = minimax(board, depth + 1, max_depth, False, player, IA)
+          score, n = minimax(board, depth + 1, max_depth, False, player, IA, n + 1)
           board[i][j] = ""
           max_score = max(max_score, score)
-    return max_score, depth
+    return max_score, n
   else:
     min_score = float('inf')
     for i in range(len(board)):
       for j in range(len(board[i])):
         if board[i][j] == "":
           board[i][j] = player
-          score, depth = minimax(board, depth + 1, max_depth, True, player, IA)
+          score, n = minimax(board, depth + 1, max_depth, True, player, IA, n + 1)
           board[i][j] = ""
           min_score = min(min_score, score)
-    return min_score, depth
+    return min_score, n
 
 # ----------------- HARD
 def hard(board, player, IA):
@@ -147,20 +147,20 @@ def hard(board, player, IA):
     for j in range(len(board[i])):
       if board[i][j] == "":
         board[i][j] = IA
-        score, depth = minimax(board, 0, 9, False, player, IA)
+        score, n = minimax(board, 0, 9, False, player, IA)
         board[i][j] = ""
         
         if score > best_score:
           best_score = score
           best_move = (i, j)
         elif score == best_score:
-          if min_depth > depth:
+          if min_depth > n:
             best_move = (i, j)
-            min_depth = depth
+            min_depth = n
   return best_move
 
 # ----------------- MEDIUM 
-def medium(board, player, IA):
+def medium(board, player, IA, error_probability = 0.5):
   best_score = float('-inf')
   best_move = None
   
@@ -170,10 +170,13 @@ def medium(board, player, IA):
         board[i][j] = IA
         score, _ = minimax(board, 0, 1, False, player, IA)
         board[i][j] = ""
-        
+
         if score > best_score:
           best_score = score
           best_move = (i, j)
+
+  if random.random() < error_probability:
+    return random_move(board)
   return best_move
 
 # ----------------- EASY
@@ -181,7 +184,7 @@ def easy(board, player, IA):
   for i in range(3):
     count_IA = 0
     count_player = 0
-    empty_indices = []
+    empty_indices = -1
     
     for j in range(3):
       if board[i][j] == IA:
@@ -189,15 +192,15 @@ def easy(board, player, IA):
       elif board[i][j] == player:
         count_player += 1
       else:
-        empty_indices.append(j)
+        empty_indices = j
     
-    if count_IA == 2 and count_player == 0:
-      return (i, random.choice(empty_indices))
+    if count_IA > 0 and count_player == 0:
+      return (i, empty_indices)
 
   for j in range(3):
     count_IA = 0
     count_player = 0
-    empty_indices = []
+    empty_indices = -1
     
     for i in range(3):
       if board[i][j] == IA:
@@ -205,10 +208,10 @@ def easy(board, player, IA):
       elif board[i][j] == player:
         count_player += 1
       else:
-        empty_indices.append(i)
+        empty_indices = i
     
-    if count_IA == 2 and count_player == 0:
-      return (random.choice(empty_indices), j)
+    if count_IA > 0 and count_player == 0:
+      return (empty_indices, j)
 
   if board[0][0] == IA and board[1][1] == IA and board[2][2] == "":
     return (2, 2)
