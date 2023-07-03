@@ -160,24 +160,53 @@ def hard(board, player, IA):
   return best_move
 
 # ----------------- MEDIUM 
-def medium(board, player, IA, error_probability = 0.5):
-  best_score = float('-inf')
-  best_move = None
-  
-  for i in range(len(board)):
-    for j in range(len(board[i])):
-      if board[i][j] == "":
-        board[i][j] = IA
-        score, _ = minimax(board, 0, 1, False, player, IA)
-        board[i][j] = ""
+def medium(board, player, IA):
+  for i in range(3):
+    count_IA = 0
+    count_player = 0
+    empty_indices = -1
+    
+    for j in range(3):
+      if board[i][j] == IA:
+        count_IA += 1
+      elif board[i][j] == player:
+        count_player += 1
+      else:
+        empty_indices = j
+    
+    if count_player == 2 and count_IA == 0:
+      return (i, empty_indices)
 
-        if score > best_score:
-          best_score = score
-          best_move = (i, j)
+  for j in range(3):
+    count_IA = 0
+    count_player = 0
+    empty_indices = -1
+    
+    for i in range(3):
+      if board[i][j] == IA:
+        count_IA += 1
+      elif board[i][j] == player:
+        count_player += 1
+      else:
+        empty_indices = i
+    
+    if count_player == 2 and count_IA == 0:
+      return (empty_indices, j)
 
-  if random.random() < error_probability:
-    return random_move(board)
-  return best_move
+  if board[0][0] == player and board[1][1] == player and board[2][2] == "":
+    return (2, 2)
+  elif board[0][0] == player and board[2][2] == player and board[1][1] == "":
+    return (1, 1)
+  elif board[1][1] == player and board[2][2] == player and board[0][0] == "":
+    return (0, 0)
+  elif board[0][2] == player and board[1][1] == player and board[2][0] == "":
+    return (2, 0)
+  elif board[0][2] == player and board[2][0] == player and board[1][1] == "":
+    return (1, 1)
+  elif board[1][1] == player and board[2][0] == player and board[0][2] == "":
+    return (0, 2)
+
+  return random_move(board)
 
 # ----------------- EASY
 def easy(board, player, IA):
@@ -235,11 +264,3 @@ def IA(board, player, IA):
     return medium(board, player, IA)
   elif session.get("difficulty") == "Easy":
     return easy(board, player, IA)
-
-if __name__=="__main__":
-  board = [
-    ["X", "X", ""],
-    ["", "O", ""],
-    ["", "", ""]
-  ]
-  print(hard(board, "X", "O"))
