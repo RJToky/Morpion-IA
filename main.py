@@ -105,6 +105,7 @@ def random_move(board):
     if board[i][j] == "":
       return (i, j)
 
+# ----------------- HARD
 def evaluate_position(board, player, IA):
   if verify_winner(board, IA):
     return 1
@@ -136,8 +137,7 @@ def minimax(board, depth, max_depth, maximizing_player, player, IA, n = 0):
           board[i][j] = ""
           min_score = min(min_score, score)
     return min_score, n
-
-# ----------------- HARD
+  
 def hard(board, player, IA):
   best_score = float('-inf')
   best_move = None
@@ -159,13 +159,13 @@ def hard(board, player, IA):
             min_depth = n
   return best_move
 
-# ----------------- MEDIUM 
+# ----------------- MEDIUM
 def medium(board, player, IA):
   for i in range(3):
     count_IA = 0
     count_player = 0
     empty_indices = -1
-    
+      
     for j in range(3):
       if board[i][j] == IA:
         count_IA += 1
@@ -173,8 +173,10 @@ def medium(board, player, IA):
         count_player += 1
       else:
         empty_indices = j
-    
+      
     if count_player == 2 and count_IA == 0:
+      return (i, empty_indices)
+    elif count_IA == 2 and count_player == 0:
       return (i, empty_indices)
 
   for j in range(3):
@@ -192,68 +194,76 @@ def medium(board, player, IA):
     
     if count_player == 2 and count_IA == 0:
       return (empty_indices, j)
+    elif count_IA == 2 and count_player == 0:
+      return (empty_indices, j)
 
-  if board[0][0] == player and board[1][1] == player and board[2][2] == "":
-    return (2, 2)
-  elif board[0][0] == player and board[2][2] == player and board[1][1] == "":
-    return (1, 1)
-  elif board[1][1] == player and board[2][2] == player and board[0][0] == "":
-    return (0, 0)
-  elif board[0][2] == player and board[1][1] == player and board[2][0] == "":
-    return (2, 0)
-  elif board[0][2] == player and board[2][0] == player and board[1][1] == "":
-    return (1, 1)
-  elif board[1][1] == player and board[2][0] == player and board[0][2] == "":
-    return (0, 2)
+    if board[0][0] == player and board[1][1] == player and board[2][2] == "":
+      return (2, 2)
+    elif board[0][0] == player and board[2][2] == player and board[1][1] == "":
+      return (1, 1)
+    elif board[1][1] == player and board[2][2] == player and board[0][0] == "":
+      return (0, 0)
+    elif board[0][2] == player and board[1][1] == player and board[2][0] == "":
+      return (2, 0)
+    elif board[0][2] == player and board[2][0] == player and board[1][1] == "":
+      return (1, 1)
+    elif board[1][1] == player and board[2][0] == player and board[0][2] == "":
+      return (0, 2)
+    
+    if board[0][0] == IA and board[1][1] == IA and board[2][2] == "":
+      return (2, 2)
+    elif board[0][0] == IA and board[2][2] == IA and board[1][1] == "":
+      return (1, 1)
+    elif board[1][1] == IA and board[2][2] == IA and board[0][0] == "":
+      return (0, 0)
+    elif board[0][2] == IA and board[1][1] == IA and board[2][0] == "":
+      return (2, 0)
+    elif board[0][2] == IA and board[2][0] == IA and board[1][1] == "":
+      return (1, 1)
+    elif board[1][1] == IA and board[2][0] == IA and board[0][2] == "":
+      return (0, 2)
 
   return random_move(board)
 
 # ----------------- EASY
-def easy(board, player, IA):
+class Node:
+  def __init__(self, board, move):
+    self.board = board
+    self.move = move
+    self.children = []
+
+  def add_child(self, child):
+    self.children.append(child)
+
+def generate_moves(board):
+  moves = []
   for i in range(3):
-    count_IA = 0
-    count_player = 0
-    empty_indices = -1
-    
     for j in range(3):
-      if board[i][j] == IA:
-        count_IA += 1
-      elif board[i][j] == player:
-        count_player += 1
-      else:
-        empty_indices = j
-    
-    if count_IA > 0 and count_player == 0:
-      return (i, empty_indices)
+      if board[i][j] == "":
+          moves.append((i, j))
+  return moves
 
-  for j in range(3):
-    count_IA = 0
-    count_player = 0
-    empty_indices = -1
-    
-    for i in range(3):
-      if board[i][j] == IA:
-        count_IA += 1
-      elif board[i][j] == player:
-        count_player += 1
-      else:
-        empty_indices = i
-    
-    if count_IA > 0 and count_player == 0:
-      return (empty_indices, j)
+def apply_move(board, move, symbol):
+  new_board = [row[:] for row in board]
+  new_board[move[0]][move[1]] = symbol
+  return new_board
 
-  if board[0][0] == IA and board[1][1] == IA and board[2][2] == "":
-    return (2, 2)
-  elif board[0][0] == IA and board[2][2] == IA and board[1][1] == "":
-    return (1, 1)
-  elif board[1][1] == IA and board[2][2] == IA and board[0][0] == "":
-    return (0, 0)
-  elif board[0][2] == IA and board[1][1] == IA and board[2][0] == "":
-    return (2, 0)
-  elif board[0][2] == IA and board[2][0] == IA and board[1][1] == "":
-    return (1, 1)
-  elif board[1][1] == IA and board[2][0] == IA and board[0][2] == "":
-    return (0, 2)
+def easy(board, IA):
+  root = Node(board, None)
+  queue = []
+  queue.append(root)
+
+  while queue:
+    current_node = queue.pop(0)
+    if verify_winner(current_node.board, IA):
+      return current_node.move
+
+    possible_moves = generate_moves(current_node.board)
+    for move in possible_moves:
+      child_board = apply_move(current_node.board, move, IA)
+      child_node = Node(child_board, move)
+      current_node.add_child(child_node)
+      queue.append(child_node)
 
   return random_move(board)
 
@@ -263,4 +273,4 @@ def IA(board, player, IA):
   elif session.get("difficulty") == "Medium":
     return medium(board, player, IA)
   elif session.get("difficulty") == "Easy":
-    return easy(board, player, IA)
+    return easy(board, IA)
